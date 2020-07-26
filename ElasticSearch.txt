@@ -1,0 +1,55 @@
+#### Installing Elastic Search Using docker ### -- Slide 1
+
+docker network create somenetwork
+docker run -d --name elasticsearch -v $PWD/es_docker_data:/usr/share/elasticsearch/data --net somenetwork -p 9200:9200 -p 9300:9300 -e "discovery.type=single-node" elasticsearch:7.8.0
+docker run -d --name kibana --net somenetwork -p 5601:5601 kibana:7.8.0
+docker run -it --net somenetwork -v $PWD/Demo/lib:/usr/share/logstash/javalib -v $PWD/Demo/pipeline/:/usr/share/logstash/pipeline/ docker.elastic.co/logstash/logstash:7.8.0
+
+
+#### Installing Elastic Search cluster in Docker Playground ###===============================================================================================
+
+docker network create somenetwork
+
+docker run -d --name elasticsearch --net somenetwork -p 9200:9200 -p 9300:9300 --name elasticsearch \
+-e "discovery.seed_hosts=192.168.0.7" \
+-e "node.name=es01" \
+-e "cluster.initial_master_nodes=es01,es02" \
+-e "network.publish_host=192.168.0.8" \
+docker.elastic.co/elasticsearch/elasticsearch:7.8.0
+
+
+# This commands should be executed on my host machine with IP 192.168.0.25
+
+docker run -p 9200:9200 -p 9300:9300 \
+-e "discovery.seed_hosts=192.168.0.8" \
+-e "node.name=es02" \
+-e "cluster.initial_master_nodes=es01,es02" \
+-e "network.publish_host=192.168.0.7" \
+docker.elastic.co/elasticsearch/elasticsearch:7.8.0
+
+
+docker run -d -p 5601:5601 --network somenetwork -e "ELASTICSEARCH_HOSTS=http://192.168.0.7:9200" kibana:7.8.0
+
+
+
+
+
+#### INSERTING /UPDATING DOCS VERSION ###########
+
+POST school/_doc/10?if_seq_no=4&if_primary_term=1
+{
+   "name":"St Luis Public School", "description":"ICSE Afiliation",
+   "street":"Pendurthy", "city":"Visakhapatnam", "state":"AP", "zip":"531173",
+   "location":[28.5733056, 77.0122136], "fees":200000,
+   "tags":["Good Faculty", "Great Sports"], "rating":"1.5"
+}
+
+POST school/_doc/10?version=4&version_type=external
+{
+   "name":"St Luis Public School", "description":"ICSE Afiliation",
+   "street":"Pendurthy", "city":"Visakhapatnam", "state":"AP", "zip":"531173",
+   "location":[28.5733056, 77.0122136], "fees":200000,
+   "tags":["Good Faculty", "Great Sports"], "rating":"1.5"
+}
+
+
