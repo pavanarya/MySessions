@@ -3,7 +3,7 @@ from elasticsearch import Elasticsearch
 import json 
 import os
 
-es = Elasticsearch(['http://ip172-18-0-25-bse6ehdim9m0008g7090-9200.direct.labs.play-with-docker.com/'])
+es = Elasticsearch(['http://ip172-18-0-84-bsellk3oudsg00bp99n0-9200.direct.labs.play-with-docker.com/'])
 
 THIS_FOLDER = os.path.dirname(os.path.abspath(__file__))
 my_file = os.path.join(THIS_FOLDER, 'test.json')
